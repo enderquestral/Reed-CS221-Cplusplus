@@ -1,0 +1,13 @@
+My Experiences with the Debugger:
+
+First thing, IMMEDIATELY the program couldn't find the source location of my file, saying it "doesn't contain any 'host' platform architectures: x86_64h, x86_64, i386, x86_64.". I then had to type "target create highest.o" and that seemed to have worked... but then it says "Error: permission denied"?
+So I decide that maybe I'm just not initializing it right. Which was the case. I was not creating an executable use_highest to actually compare lldb to.
+
+Overall, lldb was somewhat helpful. Not much more than the standard errors gotten from the shell in my opinion, but still something. I couldn't figure out how 'where' was supposed to work as regardless of what I did, it was simply just an 'unrecognized command.'
+
+When it came to proper debugging, as mentioned before I didn't find it too useful. Maybe if my program was longer such that I couldn't afford to try and compile it all again, it would be better? It took me a sad amount of time to really learn how n and s, and c worked.. but I did find that the breaks, when paired with the print command in lldb, could be pretty useful!
+
+I had an error where though some values were in the data being searched, they were displaying as though they were in there. I eventually realized though poking around with lldb that return highest(val, start, midpointer-1); should just have been return highest(val, start, midpointer);, as the -1 was causing some odd-numbered-spaces to be erased in the search.
+
+When it came to proper problem solving, I came across more explicit errors that wouldn't allow me to compile than simple bugs. Non-constant int* trying to take in const int*, that kind of thing. 
+I was REALLY worried about adding and subtracting pointers to get an int, but... it seems to work? I tried to have an int lengthOfArray but I found that it could cause problems, so I replaced it. I did this after my first submission, so... whoops.
