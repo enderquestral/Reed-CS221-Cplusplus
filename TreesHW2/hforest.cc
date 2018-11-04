@@ -5,7 +5,7 @@
 #include <list>
 #include <algorithm>
 #include <iostream>
-
+bool compare_trees(HForest::tree_ptr_t t1, HForest::tree_ptr_t t2);
 
     HForest::HForest(int size){
         size_ = size;
@@ -19,13 +19,13 @@
     //add_tree: Take a pointer to an HTree and add it to the forest.
     void HForest::add_tree(tree_ptr_t newHTree){
         forest_.push_back(newHTree);
-        std::make_heap(forest_.begin(), forest_.end()); //doesn't like compare function????
+        std::make_heap(forest_.begin(), forest_.end(), compare_trees); //doesn't like compare function????
         size_++;
     }
 
     //pop_tree: return a pointer to the HTree with the highest value in the root node, and remove it from the forest.
     HForest::tree_ptr_t HForest::pop_tree(){
-        std::make_heap(forest_.begin(), forest_.end());
+        std::make_heap(forest_.begin(), forest_.end(), compare_trees);
         tree_ptr_t holdspot = *forest_.begin();
         //auto torf = compare_trees(*forest_.begin(), *forest_.end()); //This is fine... something about make heap is not happy
         
@@ -40,7 +40,7 @@
             //iteratingThru++;
         }
 
-        std::pop_heap(forest_.begin(), forest_.end()); //remove that tree from the forest.
+        std::pop_heap(forest_.begin(), forest_.end(), compare_trees); //remove that tree from the forest.
         //std::make_heap(forest_.begin(), forest_.end(), compare_trees(*forest_.begin(), *forest_.end()));
         size_--;
         return holdspot;
@@ -54,7 +54,7 @@
 
     //This function takes two elements (trees) in a forest and returns a bool: true if the first tree has a lower value than the second tree. 
     //The value of a tree can simple be the node value at the root of the tree.
-    bool HForest::compare_trees(tree_ptr_t t1, tree_ptr_t t2){
+    bool compare_trees(HForest::tree_ptr_t t1, HForest::tree_ptr_t t2){
         auto hold1 = t1->get_value();
         auto hold2 = t2->get_value();
         if(hold1<hold2){

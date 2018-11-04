@@ -23,8 +23,6 @@ public:
 
     void print_out_popped_tree(tree_ptr_t oldTree);
     
-    bool compare_trees(tree_ptr_t t1, tree_ptr_t t2);
-
 
 private:
     int size_;
