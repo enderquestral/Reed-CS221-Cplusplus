@@ -147,6 +147,5 @@ main() {
   test_9_bits();
   test_16_bits();
   test_100_bits();
-
   return 0;
 }

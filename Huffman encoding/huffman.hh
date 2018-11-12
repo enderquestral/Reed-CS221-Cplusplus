@@ -7,8 +7,10 @@
 
 #include <climits>
 #include <vector>
+#include <iostream>
 
 #include "htree.hh"
+#include "hforest.hh"
 
 
 //For both algorithms, this class should maintain a frequency table of symbols 
@@ -41,8 +43,10 @@ class Huffman {
   // Finally, updates the frequency table with this additional symbol.
   int decode(bool bit);
 
-  HTree make_huffman_tree();
+  void make_huffman_tree();
+  HTree::tree_ptr_t get_huffTree()const{return huffTree_;}
 private:
-  int freq_table_[257][2]; //init a frequency table of 256 possible values, for most english characters. Add to it with freq_table[DATA[idx]] (?????)
-  HForest forest;
+  int freq_table_[ALPHABET_SIZE]; //Don't make this a 2d array. init a frequency table of ALPHABET_SIZE possible values, for most english characters. Add to it with freq_table[DATA[idx]] (?????)
+  HForest forest_; 
+  HTree::tree_ptr_t huffTree_;
 };

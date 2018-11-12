@@ -21,11 +21,11 @@ void test_encode()
 
   bits = huff.encode('a');
   assert(bits.size() < CHAR_BIT);
-
+  
   bits = huff.encode('b');
   assert(bits.size() < CHAR_BIT);
-
   bits = huff.encode('b');
+
   assert(bits.size() == huff.encode('a').size());
 
   bits = huff.encode('b');
@@ -63,6 +63,9 @@ void test_decode()
   assert(decode_symbol(decoder, bits) == 'b');
   bits = encoder.encode('a');
   assert(decode_symbol(decoder, bits) == 'a');
+  bits = encoder.encode('c');
+  assert(decode_symbol(decoder, bits) == 'c');
+
   bits = encoder.encode(Huffman::HEOF);
   assert(decode_symbol(decoder, bits) == Huffman::HEOF);
 }

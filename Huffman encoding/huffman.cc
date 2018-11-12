@@ -1,40 +1,44 @@
-#include <huffman.hh>
-//#include <hforest.hh>
-
-
+#include "huffman.hh"
 
 Huffman::Huffman(){
-    temp_table[257][2] = {0}{0}; //character: 'a', appears: 2. Does not know/care about encoding. 
-    freq_table_ = std::move(temp_table);
-    //create a new HTREE node for every possible character +EOF. character/sybol will be it's key, count as it's value. 
-
+    for(int i =0; i < ALPHABET_SIZE-1; i++){ //Init all first row 0-256. From there, focus on making Huffman Tree.
+        //freq_table_[i][0] = i;//FIRST ASCII VALUE BEING 0 OR 1?
+        freq_table_[i] = 0;
+    }
+    freq_table_[ALPHABET_SIZE-1]=1;
 
 }
 Huffman::~Huffman(){
 
 }
 
-
 // Encode a symbol into a sequence of bits, then update frequency table.
-bits_t Huffman::encode(int symbol){
-    //bits_t is a vector of bools
+Huffman::bits_t Huffman::encode(int symbol){
     /*The algorithm for encoding a character (symbol) c is summarized as follows:
     Build a Huffman tree from scratch, given the existing frequency table (see below).
     Find the path to c in the Huffman tree from the root.
     Convert the path of lefts and rights to zeros and ones, which will be returned as a sequence of bits.
     Increment the frequency table by adding one to c's count.*/
 
-    //if symbol is not in the tree, we need to make a new HTree with appropriate values. HTREE NODE SHOULD HAVE NO CHILDREN.
-    //We update the freqtable with a new character instance. (check for not 0,0)
+    
+    make_huffman_tree();
+    bits_t bitsSequence;
+    //Find the instance of the symbol in the huffTree.
 
-
-    //if it is already in tree, then we increment value by 1 and remake the heap.
-    //make_heap(forest);
+    auto holdPath = huffTree_->path_to(symbol);
+    freq_table_[symbol]++;//if it is already in tree, then we increment value by 1 and remake the heap.
 
     //we have to convert from lefts/rights to 0s and 1s by finding.
     //We will be given lefts/rights for the specified HTree though path_to, which we convert to 0s and 1s. Do this with a simple for loop.
-
-    return bits_t v1(23);
+    for(auto c: holdPath){
+        if(c == HTree::Direction::LEFT){
+            bitsSequence.push_back(true); //TRUE
+        }
+        if(c == HTree::Direction::RIGHT){
+            bitsSequence.push_back(false); //FALSE
+        }
+    }
+    return bitsSequence;
 }
 
 // Decode a single bit into a symbol. If no symbol can be unmabiguously decoded
@@ -62,27 +66,64 @@ int Huffman::decode(bool bit){
 
     Note that decode works for a single bit at a time, so may have to be called multiple times until a complete symbol is identified.
     */
+    
+    //WORK ON
+    
+    if(huffTree_ == nullptr){ //huffman tree not yet computed, build one from scratch
+        make_huffman_tree();
+    }
+    int thisNodeSymbol =-1;
+
+    //BELOW WORKS... ONLY FOR THE TOP FRONT TWO THOUGH.
+    if(bit){ //True = Left = 1
+        huffTree_ = huffTree_->get_child(HTree::Direction::LEFT);
+        thisNodeSymbol = huffTree_->get_key();
+        
+    }
+    else{ //False = Right = 0
+        huffTree_ = huffTree_->get_child(HTree::Direction::RIGHT);
+        thisNodeSymbol = huffTree_->get_key();
+    }
+
+    if (thisNodeSymbol >= 0)
+    {
+        freq_table_[thisNodeSymbol]++;
+        huffTree_ = nullptr;
+        return thisNodeSymbol;
+    }
+
+    return -1; //Something has gone wrong here
 
     //Take a path,
     //Trace it down your singular HTREE (works bitwize) though lefts and rights
     //return the key, no matter what it is. [Must be within range of 0-256 in freq_table]
-
-    return 0;
 }
 
-HTree Huffman::make_huffman_tree(){
-    //MAKE 257 HTREES.
-    //Each HTree is the same thing as from the freq table: character as key, freq as value.
-    //PUT THEM ALL IN AN HFOREST.
+void Huffman::make_huffman_tree(){
+    //character: 'a', appears: 2. Does not know/care about encoding. 
+    HForest forest;
+    //create a new HTREE node for every possible character +EOF. character/symbol will be it's key, count as it's value. 
 
-    //[As long as there is more than one tree in the HForest, find the top two (lowest freq). (pop twice).
+    
+    for(int i =0; i < ALPHABET_SIZE-1; i++){ 
+        forest.add_tree(HTree::tree_ptr_t(new HTree(i, freq_table_[i])));
+    }
+    forest.add_tree(HTree::tree_ptr_t(new HTree(HEOF, 1)));
+
+    //[As long as there is more than one tree in the Hforest_, find the top two (lowest freq). (pop twice).
     //Merge the top two by making a new HTree, with key = negative_number, and value = sum_of_subtrees
     //leftnode and right node are the two trees you popped.]
     //LOOP ALL OF THIS UNTIL THERE IS ONLY ONE HTREE.
-
-
-
-    return HTree(1, 10);
+    int i =-1;
+    while(forest.size() > 1){
+        auto lowestFreq1 = forest.pop_top();
+        auto lowestFreq2 = forest.pop_top();
+        forest.add_tree(HTree::tree_ptr_t(new HTree(i,(lowestFreq1->get_value() + lowestFreq2->get_value()), lowestFreq1, lowestFreq2)));
+        i--;
+    }
+    //forest_ = forest;
+    huffTree_ = forest.pop_top();
+    //return huffTree_; //returning an HuffTree
 }
 
 //void pass_list_to_huffman(){

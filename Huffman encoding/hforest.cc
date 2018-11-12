@@ -12,7 +12,7 @@
 static bool
 compare_trees(HForest::tree_t t1, HForest::tree_t t2)
 {
-  return t1->get_value() < t2->get_value(); //changed from > to <
+  return t1->get_value() > t2->get_value(); 
   //FIX LATER
 }
 
@@ -27,15 +27,14 @@ HForest::add_tree(tree_t tree)
 
 //////////////////////////////////////////////////////////////////////////////
 // Return the tree with the highest frequency count (and remove it from forest)
-HForest::tree_t
-HForest::pop_top()
+HForest::tree_t HForest::pop_top()
 { //Modify your HForest class so that pop_top returns the tree node with the lowest value, not the highest as it was before 
   //(essentially reversing the meaning of priority so that a lower value means higher priority).
   if (trees_.empty()) {
     return nullptr;
   }
   std::pop_heap(trees_.begin(), trees_.end(), compare_trees);
-  auto ret = trees_.back();
+  auto ret = trees_.back(); //CHANGED IT TO FRONT FROM BACK?
   trees_.pop_back();
   return ret;
 }
