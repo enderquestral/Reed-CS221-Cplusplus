@@ -57,6 +57,9 @@ int main(int argc, char* argv[])
          
         for(auto r : vectorOf1and0s){
             symbol = huff.decode(r);//use that array to work with huffman decode
+            if(symbol != -1){
+                break;
+            }
         }
         std::cout << char(symbol)<<"\n";
         decryptedFile.put(char(symbol));//put the char() version of the returned int into the new file
