@@ -23,19 +23,20 @@ int main(int argc, char const *argv[])
     Cities::permutation_t shortestPerm;
 
     int perms = 1000000;
-    for(int i = 1; i < perms; i++)
-    {
-        Cities::permutation_t randPerm = cities.random_permutation(citySize);
-        auto newDist = cities.total_path_distance(randPerm);
-        if(newDist < minDist)
-        {
-            shortestPerm = randPerm;
-            minDist = newDist;
-            std::cout << i << " " << newDist << "\n";
+    if(citySize > 0){
+        for(int i = 1; i < perms; i++){
+            Cities::permutation_t randPerm = cities.random_permutation(citySize);
+            auto newDist = cities.total_path_distance(randPerm);
+            if(newDist < minDist)
+            {
+                shortestPerm = randPerm;
+                minDist = newDist;
+                std::cout << i << " " << newDist << "\n";
+            }
         }
-
+        cities = cities.reorder(shortestPerm);
     }
-    cities = cities.reorder(shortestPerm);
+    
 
     std::ofstream newFile;
     newFile.open("shortest.tsv");
